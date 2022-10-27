@@ -1,0 +1,10 @@
+#!/bin/sh
+
+set -eufx
+
+TO_CHECK="bot"
+
+black --check "$TO_CHECK"
+isort --check "$TO_CHECK"
+pflake8 "$TO_CHECK"
+python -m pytest -v --import-mode=importlib "$TO_CHECK"
