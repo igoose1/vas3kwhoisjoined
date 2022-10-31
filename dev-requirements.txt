@@ -53,8 +53,6 @@ flake8-fixme==1.1.1
     # via -r dev-requirements.in
 flake8-isort==5.0.0
     # via -r dev-requirements.in
-flake8-mock==0.3
-    # via -r dev-requirements.in
 flake8-multiline-containers==0.0.19
     # via -r dev-requirements.in
 flake8-mutable==1.2.0

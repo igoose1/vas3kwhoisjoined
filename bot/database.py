@@ -20,7 +20,6 @@ class User(peewee.Model):
 
 class Chat(peewee.Model):
     telegram_id = peewee.IntegerField(unique=True, index=True)
-    configured_by = peewee.ForeignKeyField(User)
     found_message = peewee.TextField(default=DEFAULT_FOUND_MESSAGE)
     ban_not_found_user = peewee.BooleanField(default=False)
 

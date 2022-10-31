@@ -25,9 +25,10 @@ from . import (
     CONFIGURED_MESSAGE,
     DEFAULT_NOT_FOUND_MESSAGE,
     HELP_MESSAGE,
+    OWNER_MUST_BE_IN_CLUB_MESSAGE,
 )
 from .club import Club, MemberNotFound, NetClubException
-from .database import Chat, User
+from .database import Chat
 
 __all__ = ("app",)
 
@@ -56,7 +57,7 @@ def welcome_new_chat_member(client, message: pyrogram.types.Message):
     logger.info("new chat member (uid=%d).", message.from_user.id)
 
     chat = Chat.get(Chat.telegram_id == message.chat.id)
-    full_name = f"{message.from_user.first_name} {message.from_user.last_name or ''}".strip()
+    full_name = f"{message.from_user.first_name} {message.from_user.last_name or ''}".strip()  # noqa
 
     try:
         member = club.whois(message.from_user.id)
@@ -79,22 +80,41 @@ def welcome_new_chat_member(client, message: pyrogram.types.Message):
     )
 
 
+@app.on_message(
+    pyrogram.filters.command("start")
+    & pyrogram.filters.group
+    & ~IsEnabledFilter,
+)
+def enable_group(client: pyrogram.Client, message: pyrogram.types.Message):
+    for member in message.chat.get_members(
+        filter=pyrogram.enums.ChatMembersFilter.ADMINISTRATORS,
+    ):
+        if member.status == pyrogram.enums.ChatMemberStatus.OWNER:
+            break
+    if member.status != pyrogram.enums.ChatMemberStatus.OWNER:
+        message.reply(OWNER_MUST_BE_IN_CLUB_MESSAGE, quote=True)
+        return
+    try:
+        _ = club.whois(member.user.id)
+    except MemberNotFound:
+        message.reply(OWNER_MUST_BE_IN_CLUB_MESSAGE, quote=True)
+        return
+    except NetClubException:
+        return
+
+    Chat.create(telegram_id=message.chat.id)
+    message.reply(CONFIGURED_MESSAGE, quote=True)
+
+
+@app.on_message(
+    pyrogram.filters.command("start")
+    & pyrogram.filters.group
+    & IsEnabledFilter,
+)
+def ensure_group_is_enabled(client, message: pyrogram.types.Message):
+    message.reply(CONFIGURED_MESSAGE, quote=True)
+
+
 @app.on_message(pyrogram.filters.command("start") & pyrogram.filters.private)
 def start(client, message: pyrogram.types.Message):
     message.reply(HELP_MESSAGE, quote=True, disable_web_page_preview=True)
-
-
-@app.on_message(pyrogram.filters.command("start") & pyrogram.filters.group)
-def enable_group(client, message: pyrogram.types.Message):
-    try:
-        club.whois(message.from_user.id)
-    except (MemberNotFound, NetClubException):
-        return
-    Chat.create(
-        telegram_id=message.chat.id,
-        configured_by=User.get(User.telegram_id == message.from_user.id),
-    )
-    message.reply(
-        CONFIGURED_MESSAGE,
-        quote=True,
-    )

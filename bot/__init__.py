@@ -50,3 +50,7 @@ HELP_MESSAGE = f"bot: {__version__}"
 DEFAULT_FOUND_MESSAGE = '$fullname в <a href="$url">клубе</a>!'
 DEFAULT_NOT_FOUND_MESSAGE = "$fullname не найден в клубе!"
 CONFIGURED_MESSAGE = "Бот работает в этом чате!"
+OWNER_MUST_BE_IN_CLUB_MESSAGE = (
+    "Сделай так, чтобы владелец чата не был скрыт и подключил бота. Потом "
+    "попробуй еще раз!"
+)
