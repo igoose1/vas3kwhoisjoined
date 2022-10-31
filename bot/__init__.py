@@ -26,7 +26,7 @@ __all__ = (
     "__version__",
 )
 
-__version__ = VersionInfo(0, 0, 1)
+__version__ = VersionInfo(0, 1, 0)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -46,7 +46,11 @@ IS_DEBUG = env.bool("DEBUG", default=False)
 if IS_DEBUG:
     __version__.set_debug()
 
-HELP_MESSAGE = f"bot: {__version__}"
+HELP_MESSAGE = (
+    "<a href=\"https://github.com/igoose1/vas3kwhoisjoined\">"
+    "vas3kwhoisjoined"
+    f"</a>: {__version__}"
+)
 DEFAULT_FOUND_MESSAGE = '$fullname в <a href="$url">клубе</a>!'
 DEFAULT_NOT_FOUND_MESSAGE = "$fullname не найден в клубе!"
 CONFIGURED_MESSAGE = "Бот работает в этом чате!"
