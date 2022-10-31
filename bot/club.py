@@ -2,6 +2,7 @@ import dataclasses
 import datetime
 import logging
 import typing
+from http import HTTPStatus
 from urllib.parse import urljoin
 
 import httpx
@@ -60,7 +61,7 @@ class Club:
         except httpx.RequestError:
             logger.exception("couldn't get data from club.")
             raise NetClubException
-        if response.status_code == 400:
+        if response.status_code == HTTPStatus.BAD_REQUEST:
             User.create(
                 telegram_id=telegram_id,
                 is_in_club=False,
