@@ -1,9 +1,10 @@
 version: "3.4"
 services:
-  forest-bot:
+  bot:
     build: .
     restart: always
     environment:
       - API_ID=$API_ID
       - API_HASH=$API_HASH
       - BOT_TOKEN=$BOT_TOKEN
+      - CLUB_TOKEN=$CLUB_TOKEN
